@@ -33,7 +33,7 @@ def get_recipes():
         for recipe_link in page_recipes_links[course]:
             if max_recipes > 2:
                 break
-            max_recipes = 1
+            max_recipes += 1
             # Make a GET request to fetch the raw HTML content
             html_content = requests.get(recipe_link).text
 
@@ -56,8 +56,25 @@ def get_recipes():
                 macros[macros_name[i].get_text().encode('ascii', 'ignore').decode('ascii')] = macros_g[i].get_text()
 
             recipe["macros"] = macros
-            quantity = 0
 
+            # Getting other information (vegan, vegetarian, gluten and lactose free)
+            other_info = soup.find_all("span", {"class": "gz-name-featured-data-other"})
+            recipe["vegetarian"] = False
+            recipe["light"] = False
+            recipe["gluten_free"] = False
+            recipe["lactose_free"] = False
+            for info in other_info:
+                property = info.get_text().lower().replace(" ", "")
+                if property == "vegetariano":
+                    recipe["vegetarian"] = True
+                if property == "light":
+                    recipe["light"] = True
+                if property == "senzaglutine":
+                    recipe["gluten_free"] = True
+                if property == "senzalattosio":
+                    recipe["lactose_free"] = True
+
+            quantity = 0
             # Getting recipe info
             info = soup.find_all("div", {"class": "gz-list-featured-data"})[0]
             info = info.find_all("span", {"class" : "gz-name-featured-data"})[:5]
@@ -70,6 +87,7 @@ def get_recipes():
                     recipe[pair[0]] = difficulty_normalizer(pair[1].strip())
                 elif "Dosi per" in pair[0]:
                     quantity = quantity_normalizer(pair[1].strip())
+                    print("Quantity: ", quantity)
                 elif "Nota" not in pair[0]:
                     recipe[pair[0]] = pair[1].strip()
 
@@ -79,38 +97,33 @@ def get_recipes():
             ing = {}
 
             for elem in ingredients:
-                products[elem.a.get_text()] = {"price" : 0, "brand" : {}}
+                products[elem.a.get_text()] = {"italy": 0}
                 ing[elem.a.get_text()] = ingredient_normalizer(' '.join(elem.span.get_text().split()), quantity)
-
+                print(elem.a.get_text(), ing[elem.a.get_text()])
             recipe["ingredients"] = ing
             recipes[course][recipe["name"]] = recipe
 
     return recipes, products
 
 def ingredient_normalizer(s:str, divisor:int):
-    if "q.b." in s:
-        return "q.b."
-    if len(s) <= 2:
-        s = s.lstrip(" ")
-        return (quantity_check(s, divisor))
-
     n_found = False
+    res = ""
     for i in range(len(s) - 1, -1, -1):
         if (ord(s[i]) >= ord('0') and ord(s[i]) <= ord('9')):
             n_found = True
-        else:
-            if n_found and s[i] != ',':
-                s = s[i:].lstrip(" ")
-                return (quantity_check(s, divisor))
+        elif n_found:
+            return (quantity_check(res, divisor))
+        res = s[i] + res
 
-    s = s.lstrip(" ")
-    return (quantity_check(s, divisor))
+    return (quantity_check(res, divisor))
 
 def quantity_check(s, divisor):
     if "kg" in s:
-        return math.ceil((quantity_normalizer(s) * 1000) / divisor)
+        return math.ceil((extract_ingredient_value(s) * 1000) / divisor)
     elif " g" in s:
-        return math.ceil((quantity_normalizer(s)) / divisor)
+        return math.ceil((extract_ingredient_value(s)) / divisor)
+    elif "cucchiaino" in s or "cucchiaini" in s or "pizzico" in s:
+        return "q.b."
     return s
 
 def time_normalizer(s):
@@ -135,11 +148,23 @@ def difficulty_normalizer(s):
 
     return -1
 
-def quantity_normalizer(s):
+def extract_ingredient_value(s):
     res = ""
     for char in s:
         if (ord(char) >= ord('0') and ord(char) <= ord('9')):
-            res = char
+            res += char
+        else:
+            break
+    return int(res)
+
+def quantity_normalizer(s):
+    #Default value if 'pezzi' is found in dosi
+    if "pezzi" in s:
+        return 4
+    res = ""
+    for char in s:
+        if (ord(char) >= ord('0') and ord(char) <= ord('9')):
+            res += char
         else:
             break
     return int(res)
