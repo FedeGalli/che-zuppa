@@ -1,11 +1,12 @@
 from bs4 import BeautifulSoup
 import requests
 import math
+import re
 
-starting_points = {"starter" : "https://www.giallozafferano.it/ricette-cat/page1/Antipasti/",
-    "main_course": "https://www.giallozafferano.it/ricette-cat/Primi/",
-    "second_course": "https://www.giallozafferano.it/ricette-cat/Secondi-piatti/",
-    "dessert": "https://www.giallozafferano.it/ricette-cat/Dolci-e-Desserts/"}
+starting_points = {"starter" : "https://www.giallozafferano.it/ricette-cat/page1/Antipasti/?difficolta%5Bfacile%5D=1",
+    "main_course": "https://www.giallozafferano.it/ricette-cat/page1/Primi/?difficolta%5Bfacile%5D=1",
+    "second_course": "https://www.giallozafferano.it/ricette-cat/page1/Secondi-piatti/?difficolta%5Bfacile%5D=1",
+    "dessert": "https://www.giallozafferano.it/ricette-cat/page1/Dolci-e-Desserts/?difficolta%5Bfacile%5D=1"}
 
 page_recipes_links = {"starter" : [], "main_course": [], "second_course": [], "dessert": []}
 
@@ -29,11 +30,11 @@ def get_recipes():
     products= {}
     # Iterate trough each recipe link and extract information
     for course in page_recipes_links:
-        max_recipes = 0
+        max_recipes = 2
         for recipe_link in page_recipes_links[course]:
-            if max_recipes > 2:
+            if max_recipes == 0:
                 break
-            max_recipes += 1
+            max_recipes -= 1
             # Make a GET request to fetch the raw HTML content
             html_content = requests.get(recipe_link).text
 
@@ -77,7 +78,7 @@ def get_recipes():
             quantity = 0
             # Getting recipe info
             info = soup.find_all("div", {"class": "gz-list-featured-data"})[0]
-            info = info.find_all("span", {"class" : "gz-name-featured-data"})[:5]
+            info = info.find_all("span", {"class" : "gz-name-featured-data"})
 
             for i in range(len(info)):
                 pair = info[i].get_text().split(":")
@@ -87,9 +88,11 @@ def get_recipes():
                     recipe[pair[0]] = difficulty_normalizer(pair[1].strip())
                 elif "Dosi per" in pair[0]:
                     quantity = quantity_normalizer(pair[1].strip())
-                    print("Quantity: ", quantity)
                 elif "Nota" not in pair[0]:
                     recipe[pair[0]] = pair[1].strip()
+                else:
+                    recipe["Nota"] = pair[0].strip()[5:]
+
 
             # Getting recipe ingredients
             ingredients = soup.find_all("dl", {"class": "gz-list-ingredients"})[0]
@@ -99,10 +102,41 @@ def get_recipes():
             for elem in ingredients:
                 products[elem.a.get_text()] = {"italy": 0}
                 ing[elem.a.get_text()] = ingredient_normalizer(' '.join(elem.span.get_text().split()), quantity)
-                print(elem.a.get_text(), ing[elem.a.get_text()])
             recipe["ingredients"] = ing
-            recipes[course][recipe["name"]] = recipe
 
+            # Getting recipe steps
+            # Find the specific <div> with the class "gz-content-recipe-step"
+            target_div = soup.find_all('div', class_='gz-content-recipe-step')
+            # Initialize a list to store the result
+            steps = {}
+            index = 0
+            for target in target_div:
+            # From that <div>, find the <p> tag
+                paragraph = target.find('p')
+                # Iterate through the contents of the <p> tag
+                text_chunk = ''
+                for content in paragraph.contents:
+                    if isinstance(content, str):
+                        # If the content is a string, append it to the current chunk
+                        text_chunk += content
+                    elif content.name == 'span' and 'num-step' in content['class']:
+                        # If it's a <span> with class "num-step", store the current chunk and start a new one
+                        if len(text_chunk.strip())> 3:
+                            #removing wrong leading characters
+                            text_chunk = remove_leading_non_alnum(text_chunk.strip())
+                            steps[index] = text_chunk
+                            index += 1
+                        text_chunk = ''
+
+                # Append the last chunk after the loop
+                if text_chunk and len(text_chunk.strip()) > 3:
+                    text_chunk = remove_leading_non_alnum(text_chunk.strip())
+                    steps[index] = text_chunk
+                    index += 1
+
+            recipe["steps"] = steps
+            #print(direction_structure)
+            recipes[course][recipe["name"]] = recipe
     return recipes, products
 
 def ingredient_normalizer(s:str, divisor:int):
@@ -118,12 +152,12 @@ def ingredient_normalizer(s:str, divisor:int):
     return (quantity_check(res, divisor))
 
 def quantity_check(s, divisor):
-    if "kg" in s:
+    if "q.b." in s or "cucchiaino" in s or "cucchiaini" in s or "pizzico"in s:
+        return "q.b."
+    elif " kg" in s:
         return math.ceil((extract_ingredient_value(s) * 1000) / divisor)
     elif " g" in s:
         return math.ceil((extract_ingredient_value(s)) / divisor)
-    elif "cucchiaino" in s or "cucchiaini" in s or "pizzico" in s:
-        return "q.b."
     return s
 
 def time_normalizer(s):
@@ -168,3 +202,8 @@ def quantity_normalizer(s):
         else:
             break
     return int(res)
+
+# Function to remove only leading non-alphanumeric characters
+def remove_leading_non_alnum(s):
+    formatted_string = re.sub(r'^[^a-zA-Z0-9]+', '', s)
+    return formatted_string[0].upper() + formatted_string[1:]

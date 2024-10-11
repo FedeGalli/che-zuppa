@@ -7,6 +7,7 @@ from firebase_admin import credentials
 from firebase_admin import db
 import json
 import re
+import random
 
 def get_num_uom(s):
     num = ""
@@ -25,7 +26,7 @@ def get_num_uom(s):
 def get_product_price(starting_points, product):
     #go to the search page and find the product
     driver.get(starting_points + '%20'.join(product.lower().split(' ')))
-    time.sleep(10)
+    time.sleep(random.randint(10, 60))
     html = driver.page_source
     soup = BeautifulSoup(html, 'html.parser')
 
