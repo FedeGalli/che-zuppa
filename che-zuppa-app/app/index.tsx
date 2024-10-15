@@ -1,9 +1,8 @@
-import { StatusBar, StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'
+import { StatusBar, Text, View, Image } from 'react-native'
 import React, { useEffect } from 'react'
-import tw from 'twrnc';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import Animated, { useSharedValue, withSpring } from 'react-native-reanimated';
-import { useNavigation, useRouter } from 'expo-router';
+import {  useRouter } from 'expo-router';
 
 export default function WelcomeScreen() {
 

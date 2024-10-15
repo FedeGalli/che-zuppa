@@ -1,12 +1,9 @@
-import { StatusBar, StyleSheet, Text, View, Image, TouchableOpacity , ScrollView, TextInput} from 'react-native'
+import { StatusBar, Text, View, Image , ScrollView, TextInput} from 'react-native'
 import React, { useEffect, useState } from 'react'
-import tw from 'twrnc';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
-import Animated, { useSharedValue, withSpring } from 'react-native-reanimated';
-import { useNavigation } from 'expo-router';
 import { ChatBubbleBottomCenterTextIcon, MagnifyingGlassIcon} from 'react-native-heroicons/outline'
 import Categories from '@/components/categories';
-import { getDatabase, ref, onValue, get } from "firebase/database";
+import { getDatabase, ref, get } from "firebase/database";
 import { app } from '@/app/firebaseConfig'
 import Recipes from "@/components/recipes"
 

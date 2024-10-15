@@ -1,10 +1,8 @@
-import { StyleSheet, Text, TouchableOpacity, View, ScrollView, Image } from 'react-native'
-import React, { useEffect } from 'react'
+import { Text, TouchableOpacity, View, ScrollView, Image } from 'react-native'
+import React from 'react'
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
-import { categories } from '@/constants';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import { getDatabase, ref, onValue } from "firebase/database";
 import { app } from '@/app/firebaseConfig'
 
 interface CategoriesProps {
