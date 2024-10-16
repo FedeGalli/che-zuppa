@@ -1,7 +1,8 @@
-import { Text, View } from 'react-native'
+import { Pressable, Text, View, Image } from 'react-native'
 import React from 'react'
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import MasonryList from '@react-native-seoul/masonry-list'
+import Animated, { FadeInDown } from 'react-native-reanimated';
 
 export default function Recipes({recipes} : any) {
     
@@ -26,10 +27,26 @@ export default function Recipes({recipes} : any) {
 }
 
 const RecipeCard = ({item, index} : any) => {
+    let isEven = index % 2 == 0;
     return (
-        <View>
+        <Animated.View entering={FadeInDown.delay(index*100).duration(600).springify().damping(20)}>
+            <Pressable
+                style={{width: '100%', paddingLeft: isEven? 0 : 8, paddingRight: isEven? 8: 0}}
+                className='flex justify-center mb-4 space-y-1'
+            >
+                <Image
+                    source={require('../assets/images/category_placeholder.jpg')}
+                    style={{width: '100%', height: index%3==0? hp(25): hp(35), borderRadius:35}}
+                    className='bj-black/5' 
+                />
+                <Text style={{fontSize: hp(1.5)}} className='font-samibold ml-2 text-neutral-600'>
+                    {
+                        Object.keys(item).length > 25? Object.keys(item).slice(0, 20) + '...': Object.keys(item)
+                    }
+                </Text>
+            </Pressable>
             <Text>{item["lactose_free"]}</Text>
-        </View>
+        </Animated.View>
     )
         
 }

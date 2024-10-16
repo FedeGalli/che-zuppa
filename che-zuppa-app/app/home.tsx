@@ -108,7 +108,7 @@ export default function HomeScreen() {
 
         {/* Recipes list */}
         <View>
-          <Recipes recipes={recipes} /> 
+          {recipes.length > 0 && <Recipes recipes={recipes} />}
         </View>
       </ScrollView>
     </View>
