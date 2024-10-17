@@ -7,11 +7,11 @@ import { app } from '@/app/firebaseConfig'
 
 interface CategoriesProps {
   activeCategory: string;                       // The current active category
-  setActiveCategory: (category: string) => void;
-  categories: string[] // Function to set the active category
+  handleActiveCategory: (category: string) => void;
+  categories: string[]; // Function to set the active category
 }
 
-export default function Categories({ categories, activeCategory, setActiveCategory }: CategoriesProps) {
+export default function Categories({ categories, activeCategory, handleActiveCategory }: CategoriesProps) {
 
 
   const getUser = () => {
@@ -42,7 +42,13 @@ export default function Categories({ categories, activeCategory, setActiveCatego
                 <TouchableOpacity
                   key={index}
                   className="flex items-center space-y-1"
-                  onPress={() => setActiveCategory(cat)}
+                  onPress={() => {
+                    if (isActive) {
+                      handleActiveCategory('')
+                    }
+                    else
+                      handleActiveCategory(cat)
+                  }}
                 >
                   <View className={'rounded-full p-[6px] ' + activeButtonClass}>
                     <Image 

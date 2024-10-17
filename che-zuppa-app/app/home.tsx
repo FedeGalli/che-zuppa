@@ -33,6 +33,7 @@ export default function HomeScreen() {
   const getRecipes = async (categories: string[]) => {
     const db = getDatabase(app);
     let formattedRecipes: object[] = [];
+    
 
     const recipePromises = categories.map(async (category) => {
       const conn = ref(db, `/recipes/${category}`);
@@ -54,15 +55,32 @@ export default function HomeScreen() {
     setRecipes(formattedRecipes);  // Update the state with the fetched recipes
   };
 
+  // filtering the categories based on the user's input
+  const handleChangeCategory = (category : any)=>{
+    setRecipes([])
+    setActiveCategory(category)
+    if (category == '') {
+      const fetchAllCategories = async () => {
+        const allCategories = await getCategories()
+        getRecipes(allCategories)
+      }
+      fetchAllCategories()
+    }
+    else{
+      getRecipes([category])
+    }
+  }
+
   // Chained data fetching for categories and then recipes
   useEffect(() => {
     const fetchCategoriesAndRecipes = async () => {
       const fetchedCategories = await getCategories();
+      
       if (fetchedCategories.length > 0) {
         await getRecipes(fetchedCategories);
       }
     };
-
+    
     fetchCategoriesAndRecipes();  // Call the async fetch function
   }, []);  // Only runs once when the component mounts
 
@@ -103,12 +121,12 @@ export default function HomeScreen() {
         </View>
         {/* Categories rendering */}
         <View>
-          {categories.length > 0 && <Categories categories={categories} activeCategory={activeCategory} setActiveCategory={setActiveCategory}/>}
+          {categories.length > 0 && <Categories categories={categories} activeCategory={activeCategory} handleActiveCategory={handleChangeCategory}/>}
         </View>
 
         {/* Recipes list */}
         <View>
-          {recipes.length > 0 && <Recipes recipes={recipes} />}
+          <Recipes recipes={recipes} />
         </View>
       </ScrollView>
     </View>
