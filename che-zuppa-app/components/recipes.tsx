@@ -4,6 +4,7 @@ import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-nativ
 import MasonryList from '@react-native-seoul/masonry-list'
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import Loading from './loading';
+import { useRouter } from 'expo-router';
 
 export default function Recipes({recipes} : any) {
     const [showLoading, setShowLoading] = useState(false);
@@ -48,11 +49,20 @@ export default function Recipes({recipes} : any) {
 
 const RecipeCard = ({item, index} : any) => {
     let isEven = index % 2 == 0;
+    const router = useRouter()
     return (
         <Animated.View entering={FadeInDown.delay(index*100).duration(600).springify().damping(20)}>
             <Pressable
                 style={{width: '100%', paddingLeft: isEven? 0 : 8, paddingRight: isEven? 8: 0}}
                 className='flex justify-center mb-4 space-y-1'
+                onPress={() => {
+                    router.push({
+                        pathname: '/recipeDetail',
+                        params: {
+                          recipe: JSON.stringify(item),  // Convert the object to a string
+                        }
+                      });
+                }}
             >
                 <Image
                     source={require('../assets/images/category_placeholder.jpg')}
