@@ -67,7 +67,7 @@ const RecipeCard = ({item, index} : any) => {
                 <Image
                     source={require('../assets/images/category_placeholder.jpg')}
                     style={{width: '100%', height: index%3==0? hp(25): hp(35), borderRadius:35}}
-                    className='bj-black/5' 
+                    className='bj-black/5'
                 />
                 <Text style={{fontSize: hp(1.5)}} className='font-samibold ml-2 text-neutral-600'>
                     {

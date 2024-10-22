@@ -4,6 +4,7 @@ import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-nativ
 import { BanknotesIcon, BeakerIcon, BoltIcon, ChevronLeftIcon, ClockIcon, CurrencyEuroIcon} from 'react-native-heroicons/outline'
 import { HeartIcon} from 'react-native-heroicons/solid'
 import {  useLocalSearchParams, router } from 'expo-router';
+import Animated, { FadeInDown, FadeIn } from 'react-native-reanimated';
 
 
 export default function RecipeDetail() {
@@ -13,48 +14,37 @@ export default function RecipeDetail() {
 
     // Check if recipe exists and parse it
     const parsedRecipe = recipe ? JSON.parse(recipe as string) : null;
-    console.log(recipe)
 
+    const ingredientsKeys = Object.keys(parsedRecipe[Object.keys(parsedRecipe)[0]]["ingredients"])
+    const stepsKeys = parsedRecipe[Object.keys(parsedRecipe)[0]]["steps"]
     const goBack = () => {
         router.back()
     }
     return (
+        <View className='flex-1 bg-white'>
         <ScrollView className="bg-white flex-1" showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: 30}}>
             <StatusBar barStyle={"light-content"} />
+            {/* Back button and favorite button */}
+
+
             {/* recipe image */}
             <View className="flex-row justify-center">
-                <Image source={require('../assets/images/category_placeholder.jpg')} style={{width: wp(98), borderRadius: 53, borderBottomLeftRadius: 40, borderBottomRightRadius: 40, marginTop: 4}} />
-            </View>
-
-            { /* back button */}
-            <View className='w-full absolute flex-row justify-between items-center pt-14'>
-                <TouchableOpacity className="p-2 rounded-full ml-5 bg-white" onPress={goBack}>
-                    <ChevronLeftIcon size={hp(3.5)} strokeWidth={4.5} color='#fbbf24' />
-                </TouchableOpacity>
-                <TouchableOpacity className="p-2 rounded-full mr-5 bg-white" onPress={() => {
-                    if (isFavourite) {
-                        setIsFavorite(false)
-                    } else {
-                        setIsFavorite(true)
-                    }
-
-                }}>
-                    <HeartIcon size={hp(3.5)} strokeWidth={4.5} color= {isFavourite? 'red': 'grey'} />
-                </TouchableOpacity>
+                <Image source={require('../assets/images/category_placeholder.jpg')} style={{width: wp(98), borderRadius: 53, borderBottomLeftRadius: 40, borderBottomRightRadius: 40, marginTop: 4}}/>
             </View>
 
             <View className="px-4 flex justify-between space-y-4 pt-8">
                 { /* name and area */}
-                <View className='space-y-2'>
+                <Animated.View entering={FadeInDown.delay(200).duration(700).springify().damping(12)}className='space-y-2'>
                     <Text style={{fontSize: hp(3)}} className='font-bold flex-1 text-neutral-700'>
                         {Object.keys(parsedRecipe)}
                     </Text>
                     <Text style={{fontSize: hp(2)}} className='font-medium flex-1 text-neutral-500'>
                         {"Italian"}
                     </Text>
-                </View>
+                </Animated.View>
+
                 {/* misc */}
-                <View className='flex-row justify-around'>
+                <Animated.View entering={FadeInDown.delay(300).duration(700).springify().damping(12)} className='flex-row justify-around'>
                     <View className='flex rounded-full p-1 items-center'>
                         <View style={{height: hp(3.5), width:hp(3.5)}} className='rounded-full flex items-center justify-center'>
                             <BeakerIcon size={hp(3)} strokeWidth={2.5} color={"black"} />
@@ -107,31 +97,69 @@ export default function RecipeDetail() {
                             </Text>
                         </View>
                     </View>
-                </View>
-            </View>
-            
-            {/* ingredients */}
-            <View className='space-y-4'>
-                <Text style={{fontSize: hp(2.5)}} className='font-bold flex-1 text-neutral-700'>
-                    Ingredients
-                </Text>
-            
-                <View className='space-y-2 ml-3'>
-                    {
-                        parsedRecipe[Object.keys(parsedRecipe)[0]].forEach((key: any, index: any) => {
-                            return (
-                                <View key={index} className='flex-row space-x-4'>
-                                    <View style={{height: hp(1.5), width:hp(1.5)}} className='bg-amber-300 rounded-full'>
+                </Animated.View>
+
+                {/* ingredients */}
+                <Animated.View entering={FadeInDown.delay(400).duration(700).springify().damping(12)} className='space-y-4'>
+                    <Text style={{fontSize: hp(2.5)}} className='font-bold flex-1 text-neutral-700'>
+                        Ingredients
+                    </Text>
+                
+                    <View className='space-y-2 ml-3'>
+                        {
+                            ingredientsKeys.map((key: any, i: any) => {
+                                return (
+                                    <View key={i} className='flex-row space-x-4'>
+                                        <View style={{height: hp(1.5), width:hp(1.5)}} className='bg-amber-300 rounded-full' />
                                         <View className='flex-row space-x-2'>
-                                            <Text>{key}</Text>
+                                            <Text style={{fontSize: hp(1.7)}}className='font-extrabold text-neutral-700'>{key}</Text>
+                                            <Text style={{fontSize: hp(1.7)}}className='font-medium text-neutral-600'>{parsedRecipe[Object.keys(parsedRecipe)[0]]["ingredients"][key]}g</Text>
                                         </View>
                                     </View>
-                                </View>
-                            )
-                        })
-                    }
-                </View>
+                                )
+                            })
+                        }
+                    </View>
+                </Animated.View>
+
+                {/* steps */}
+                <Animated.View entering={FadeInDown.delay(500).duration(700).springify().damping(12)} className='space-y-4'>
+                    <Text style={{fontSize: hp(2.5)}} className='font-bold flex-1 text-neutral-700'>
+                        Steps
+                    </Text>
+                
+                    <View className='space-y-2 ml-3'>
+                        {
+                            stepsKeys.map((item: any, i: any) => {
+                                return (
+                                    <View key={i} className='flex-row space-x-4'>
+                                        <View style={{height: hp(1.5), width:hp(1.5)}} className='bg-amber-300 rounded-full' />
+                                        <View className='flex-row space-x-2'>
+                                            <Text style={{fontSize: hp(1.7)}}className='font-medium text-neutral-600'>{item}</Text>
+                                        </View>
+                                    </View>
+                                )
+                            })
+                        }
+                    </View>
+                </Animated.View>
             </View>
         </ScrollView>
+        <Animated.View entering={FadeIn.delay(200).duration(500)} className='absolute w-full flex-row justify-between items-center pt-14' style={{zIndex: 1, top: 0}}>
+                <TouchableOpacity className="p-2 rounded-full ml-5 bg-white" onPress={goBack}>
+                    <ChevronLeftIcon size={hp(3)} strokeWidth={4.5} color='#fbbf24' />
+                </TouchableOpacity>
+                <TouchableOpacity className="p-2 rounded-full mr-5 bg-white" onPress={() => {
+                    if (isFavourite) {
+                        setIsFavorite(false);
+                    } else {
+                        setIsFavorite(true);
+                    }
+                }}>
+                    <HeartIcon size={hp(3)} strokeWidth={4.5} color={isFavourite ? 'red' : 'grey'} />
+                </TouchableOpacity>
+            </Animated.View>
+        </View>
+
     );
 }
