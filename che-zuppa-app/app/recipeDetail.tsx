@@ -17,19 +17,24 @@ export default function RecipeDetail() {
 
     const ingredientsKeys = Object.keys(parsedRecipe[Object.keys(parsedRecipe)[0]]["ingredients"])
     const stepsKeys = parsedRecipe[Object.keys(parsedRecipe)[0]]["steps"]
+    //<Image source={{uri:parsedRecipe[Object.keys(parsedRecipe)[0]]['image']}} style={{width: wp(98), borderRadius: 53, borderBottomLeftRadius: 40, borderBottomRightRadius: 40, marginTop: 4}}/>
     const goBack = () => {
         router.back()
     }
     return (
         <View className='flex-1 bg-white'>
         <ScrollView className="bg-white flex-1" showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: 30}}>
-            <StatusBar barStyle={"light-content"} />
-            {/* Back button and favorite button */}
+            <StatusBar barStyle={"dark-content"} />
+            
 
 
             {/* recipe image */}
             <View className="flex-row justify-center">
-                <Image source={require('../assets/images/category_placeholder.jpg')} style={{width: wp(98), borderRadius: 53, borderBottomLeftRadius: 40, borderBottomRightRadius: 40, marginTop: 4}}/>
+            <Image
+                    source={{uri:parsedRecipe[Object.keys(parsedRecipe)[0]]['image']}}
+                    style={{width: '98%', height: hp(35), borderRadius: 53, borderBottomLeftRadius: 40, borderBottomRightRadius: 40, marginTop: 4}}
+                    className='bj-black/5'
+                />
             </View>
 
             <View className="px-4 flex justify-between space-y-4 pt-8">
@@ -145,6 +150,7 @@ export default function RecipeDetail() {
                 </Animated.View>
             </View>
         </ScrollView>
+        {/* Back button and favorite button */}
         <Animated.View entering={FadeIn.delay(200).duration(500)} className='absolute w-full flex-row justify-between items-center pt-14' style={{zIndex: 1, top: 0}}>
                 <TouchableOpacity className="p-2 rounded-full ml-5 bg-white" onPress={goBack}>
                     <ChevronLeftIcon size={hp(3)} strokeWidth={4.5} color='#fbbf24' />

@@ -1,4 +1,4 @@
-import { Pressable, Text, View, Image } from 'react-native'
+import { Pressable, Text, View, Image, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import MasonryList from '@react-native-seoul/masonry-list'
@@ -50,6 +50,8 @@ export default function Recipes({recipes} : any) {
 const RecipeCard = ({item, index} : any) => {
     let isEven = index % 2 == 0;
     const router = useRouter()
+
+    const [isChecked, setIsChecked] = useState(false);
     return (
         <Animated.View entering={FadeInDown.delay(index*100).duration(600).springify().damping(20)}>
             <Pressable
@@ -64,16 +66,59 @@ const RecipeCard = ({item, index} : any) => {
                       });
                 }}
             >
-                <Image
-                    source={require('../assets/images/category_placeholder.jpg')}
-                    style={{width: '100%', height: index%3==0? hp(25): hp(35), borderRadius:35}}
-                    className='bj-black/5'
-                />
-                <Text style={{fontSize: hp(1.5)}} className='font-samibold ml-2 text-neutral-600'>
-                    {
-                        Object.keys(item).length > 25? Object.keys(item).slice(0, 20) + '...': Object.keys(item)
-                    }
-                </Text>
+                <View style={{position: 'relative', width: '100%'}}>
+                    <Image
+                        source={{uri:item[Object.keys(item)[0]]['image']}}
+                        style={{width: '100%', height: hp(25), borderRadius:35}}
+                        className='bj-black/5'
+                    />
+                    <TouchableOpacity
+                        style={{
+                            position: 'absolute',
+                            top: 10,   // Top position of the button
+                            right: 10, // Right position of the button
+                            backgroundColor: isChecked ? '#5ced73' : 'white', // Change color based on state
+                            width: hp(4),  // Width of the circle
+                            height: hp(4), // Height of the circle (same as width)
+                            borderRadius: 20,  // Half of the width/height to make it a circle
+                            justifyContent: 'center',  // Center the text inside the circle
+                            alignItems: 'center',  // Center the text inside the circle
+                        }}
+                        onPress={() => {
+                            // Toggle the button state between checked and unchecked
+                            setIsChecked(!isChecked);
+                        }}
+                    >
+                        {/* Display checkmark or + based on state */}
+                        <Text style={{color: 'black', fontSize: hp(2.5), fontWeight: 'bold'}}>
+                            {isChecked ? '✓' : '+'}
+                        </Text>
+                    </TouchableOpacity>
+                    <View
+                        style={{
+                            position: 'absolute',
+                            bottom: 0, // Stick to the bottom of the image
+                            left: 0,
+                            right: 0,
+                            backgroundColor: 'rgba(255, 255, 255, 0.8)', // Semi-transparent black
+                            borderBottomLeftRadius: 35, // Match the image's bottom-left radius
+                            borderBottomRightRadius: 35, // Match the image's bottom-right radius
+                            paddingVertical: 8, // Padding for top and bottom of the view
+                            paddingHorizontal: 10, // Padding for left and right
+                            alignItems: 'flex-start', // Ensure text starts from the top-left
+                        }}
+                    >
+                        <Text style={{
+                            fontSize: hp(1.5),
+                            
+                            }} 
+                        className='font-samibold ml-2 text-neutral-800'>
+                        {
+                            Object.keys(item)[0].length > 40? Object.keys(item)[0].slice(0, 40) + '...': Object.keys(item)[0]
+                        }
+                        </Text>
+                    </View>
+                </View>
             </Pressable>
         </Animated.View>
     )

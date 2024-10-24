@@ -1,7 +1,7 @@
 import { StatusBar, Text, View, Image , ScrollView, TextInput} from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
-import { ChatBubbleBottomCenterTextIcon, MagnifyingGlassIcon} from 'react-native-heroicons/outline'
+import {MagnifyingGlassIcon, ShoppingCartIcon} from 'react-native-heroicons/outline'
 import Categories from '@/components/categories';
 import { getDatabase, ref, get } from "firebase/database";
 import { app } from '@/app/firebaseConfig'
@@ -95,7 +95,7 @@ export default function HomeScreen() {
         {/* Avatar image */}
         <View className="mx-4 flex-row justify-between items-centered mb-2">
           <Image source={require('../assets/images/avatar.png')} style={{height: hp(5), width: hp(5.5)}} className='rounded-full bg-slate-300'/>
-          <ChatBubbleBottomCenterTextIcon size={hp(4)} color="#94a3b8"/>
+          <ShoppingCartIcon size={hp(4)} color="#94a3b8"/>
         </View>
 
         {/* Main Text */}
@@ -131,4 +131,5 @@ export default function HomeScreen() {
       </ScrollView>
     </View>
   )
+  
 }

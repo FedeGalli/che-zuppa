@@ -6,12 +6,12 @@ import json
 
 firebase_db = ""
 credential = None
-with open("../credentials.json", "r") as f:
+with open("credentials.json", "r") as f:
     credential = json.load(f)
 
 
 # Fetch the service account key JSON file contents
-cred = credentials.Certificate('../credentials.json')
+cred = credentials.Certificate('credentials.json')
 # Initialize the app with a service account, granting admin privileges
 firebase_admin.initialize_app(cred, {
     'databaseURL': credential["firebase_database"]

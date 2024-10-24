@@ -30,7 +30,7 @@ def get_recipes():
     products= {}
     # Iterate trough each recipe link and extract information
     for course in page_recipes_links:
-        max_recipes = 2
+        max_recipes = 4
         for recipe_link in page_recipes_links[course]:
             if max_recipes == 0:
                 break
@@ -45,6 +45,12 @@ def get_recipes():
             recipe = {}
             recipe["name"] = soup.find_all("h1", {"class": "gz-title-recipe gz-mBottom2x"})[0].get_text()
             print(recipe["name"])
+            
+            # getting image
+            picture= soup.find_all("picture", {"class": "gz-featured-image"})[0]
+            img_tag = picture.find('img')['src']
+            recipe["image"] = img_tag
+            
             # getting kcal and macros
             macros_name = soup.find_all("span", {"class": "gz-list-macros-name"})[:-3]
             macros_g = soup.find_all("span", {"class": "gz-list-macros-value"})[:-3]
