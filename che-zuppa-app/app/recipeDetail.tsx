@@ -29,7 +29,7 @@ export default function RecipeDetail() {
 
 
             {/* recipe image */}
-            <Animated.View entering={FadeIn.delay(200).duration(600).springify().damping(14)} className="flex-row justify-center">
+            <Animated.View entering={SlideInUp.delay(200).springify().damping(20)} className="flex-row justify-center">
             <Image
                     source={{uri:parsedRecipe[Object.keys(parsedRecipe)[0]]['image']}}
                     style={{width: '98%', height: hp(35), borderRadius: 53, borderBottomLeftRadius: 40, borderBottomRightRadius: 40, marginTop: 4}}
