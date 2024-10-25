@@ -97,26 +97,47 @@ const RecipeCard = ({item, index} : any) => {
                     <View
                         style={{
                             position: 'absolute',
-                            bottom: 0, // Stick to the bottom of the image
+                            bottom: 10, // Stick to the bottom of the image
                             left: 0,
                             right: 0,
-                            backgroundColor: 'rgba(255, 255, 255, 0.8)', // Semi-transparent black
-                            borderBottomLeftRadius: 35, // Match the image's bottom-left radius
-                            borderBottomRightRadius: 35, // Match the image's bottom-right radius
-                            paddingVertical: 8, // Padding for top and bottom of the view
-                            paddingHorizontal: 10, // Padding for left and right
-                            alignItems: 'flex-start', // Ensure text starts from the top-left
+                            backgroundColor: 'rgba(255, 255, 255, 0.9)', // Semi-transparent background
+                            borderRadius: 35, // Match the image's bottom-left radius
+                            paddingVertical: 10,
+                            paddingHorizontal: 10,
+                            flexDirection: 'row', // Align text and slots horizontally
+                            alignItems: 'center', // Center items vertically
+                            justifyContent: 'space-between', // Space out text and slots
+                            marginLeft: hp(1.5),
+                            marginRight: hp(1.5),
+                            height: 60, // Fixed height for consistent layout
+                            overflow: 'hidden'
                         }}
                     >
-                        <Text style={{
-                            fontSize: hp(1.5),
-                            
-                            }} 
-                        className='font-samibold ml-2 text-neutral-800'>
-                        {
-                            Object.keys(item)[0].length > 40? Object.keys(item)[0].slice(0, 40) + '...': Object.keys(item)[0]
-                        }
+                        {/* Left-aligned text */}
+                        <Text
+                            style={{
+                                fontSize: hp(1.3),
+                                flex: 1, // Allow the text to take up available space
+                            }}
+                            className='font-semibold ml-2 text-neutral-800'
+                            numberOfLines={2}
+                            ellipsizeMode="tail"
+                        >
+                            {
+                                Object.keys(item)[0]
+                            }
                         </Text>
+
+                        {/* Right-aligned cost and time slots */}
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            {/* Pipe for cost */}
+                            <View style={{ width: 1, height: hp(2), backgroundColor: 'gray', marginHorizontal: hp(0.5)}} />
+                            <Text style={{ fontSize: hp(1.5), color: 'black' }}>5'</Text>
+
+                            {/* Pipe for time */}
+                            <View style={{ width: 1, height: hp(2), backgroundColor: 'gray', marginHorizontal: hp(0.5)}} />
+                            <Text style={{ fontSize: hp(1.5), color: 'black' }}>20$</Text>
+                        </View>
                     </View>
                 </View>
             </Pressable>

@@ -1,18 +1,20 @@
 import { StatusBar, Text, View, Image , ScrollView, TextInput} from 'react-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
-import {MagnifyingGlassIcon, ShoppingCartIcon} from 'react-native-heroicons/outline'
+import {MagnifyingGlassIcon, ShoppingCartIcon, ArrowLongUpIcon} from 'react-native-heroicons/outline'
 import Categories from '@/components/categories';
 import { getDatabase, ref, get } from "firebase/database";
 import { app } from '@/app/firebaseConfig'
 import Recipes from "@/components/recipes"
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { useRouter } from 'expo-router';
 
 export default function HomeScreen() {
 
   const [activeCategory, setActiveCategory] = useState<string>('')
   const [categories, setCategories] = useState<string[]>([])
   const [recipes, setRecipes] = useState<object[]>([])
-
+  
   const getCategories = async () => {
     const db = getDatabase(app);
     const conn = ref(db, '/');
@@ -99,7 +101,7 @@ export default function HomeScreen() {
         </View>
 
         {/* Main Text */}
-        <View className="mx-4 space-y-2 mb-2">
+        <View className="mx-4 space-y-1">
           <Text style={{fontSize: hp(1.7)}} className="text-neutral-600">Ciao, Federico</Text>
           <View>
             <Text style={{fontSize: hp(3.8)}}className="font-semibold text-neutral-600">Scegli cosa mangiare,</Text>
@@ -131,5 +133,4 @@ export default function HomeScreen() {
       </ScrollView>
     </View>
   )
-  
 }

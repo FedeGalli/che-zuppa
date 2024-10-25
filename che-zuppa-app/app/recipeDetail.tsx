@@ -4,7 +4,7 @@ import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-nativ
 import { BanknotesIcon, BeakerIcon, BoltIcon, ChevronLeftIcon, ClockIcon, CurrencyEuroIcon} from 'react-native-heroicons/outline'
 import { HeartIcon} from 'react-native-heroicons/solid'
 import {  useLocalSearchParams, router } from 'expo-router';
-import Animated, { FadeInDown, FadeIn } from 'react-native-reanimated';
+import Animated, { FadeInDown, FadeIn, SlideInUp } from 'react-native-reanimated';
 
 
 export default function RecipeDetail() {
@@ -29,17 +29,17 @@ export default function RecipeDetail() {
 
 
             {/* recipe image */}
-            <View className="flex-row justify-center">
+            <Animated.View entering={FadeIn.delay(200).duration(600).springify().damping(14)} className="flex-row justify-center">
             <Image
                     source={{uri:parsedRecipe[Object.keys(parsedRecipe)[0]]['image']}}
                     style={{width: '98%', height: hp(35), borderRadius: 53, borderBottomLeftRadius: 40, borderBottomRightRadius: 40, marginTop: 4}}
                     className='bj-black/5'
                 />
-            </View>
+            </Animated.View>
 
             <View className="px-4 flex justify-between space-y-4 pt-8">
                 { /* name and area */}
-                <Animated.View entering={FadeInDown.delay(200).duration(700).springify().damping(12)}className='space-y-2'>
+                <Animated.View entering={FadeInDown.delay(200).duration(700).springify().damping(12)} className='space-y-2'>
                     <Text style={{fontSize: hp(3)}} className='font-bold flex-1 text-neutral-700'>
                         {Object.keys(parsedRecipe)}
                     </Text>
@@ -115,10 +115,10 @@ export default function RecipeDetail() {
                             ingredientsKeys.map((key: any, i: any) => {
                                 return (
                                     <View key={i} className='flex-row space-x-4'>
-                                        <View style={{height: hp(1.5), width:hp(1.5)}} className='bg-amber-300 rounded-full' />
+                                        <View style={{height: hp(1), width:hp(1)}} className='bg-amber-300 rounded-full' />
                                         <View className='flex-row space-x-2'>
                                             <Text style={{fontSize: hp(1.7)}}className='font-extrabold text-neutral-700'>{key}</Text>
-                                            <Text style={{fontSize: hp(1.7)}}className='font-medium text-neutral-600'>{parsedRecipe[Object.keys(parsedRecipe)[0]]["ingredients"][key]}g</Text>
+                                            <Text style={{fontSize: hp(1.7)}}className='font-medium text-neutral-600'>{parsedRecipe[Object.keys(parsedRecipe)[0]]["ingredients"][key]} g</Text>
                                         </View>
                                     </View>
                                 )
